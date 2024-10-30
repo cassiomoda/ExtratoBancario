@@ -1,0 +1,13 @@
+unit untConfig;
+
+interface
+
+
+
+const
+  DRIVER_NAME = 'SQLite';
+  DATABASE = 'ExtratoBancario';
+
+implementation
+
+end.

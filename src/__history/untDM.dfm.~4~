@@ -1,0 +1,12 @@
+object dm: Tdm
+  Height = 750
+  Width = 1000
+  PixelsPerInch = 120
+  object connection: TFDConnection
+    Params.Strings = (
+      'DriverID=SQLite'
+      'Database=ExtratoBancario')
+    Left = 72
+    Top = 48
+  end
+end

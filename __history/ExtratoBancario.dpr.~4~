@@ -1,0 +1,19 @@
+program ExtratoBancario;
+
+uses
+  Vcl.Forms,
+  untMain in 'src\untMain.pas' {frmMain},
+  untITransacao in 'src\model\untITransacao.pas',
+  untTransacao in 'src\model\untTransacao.pas',
+  untTipoTransacao in 'src\enums\untTipoTransacao.pas',
+  untListaTransacoes in 'src\dto\untListaTransacoes.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.Title := 'ExtratoBancario';
+  Application.CreateForm(TfrmMain, frmMain);
+  Application.Run;
+end.

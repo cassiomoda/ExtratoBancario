@@ -1,0 +1,111 @@
+unit untBaseDados;
+
+interface
+
+uses
+  SysUtils, FireDAC.Comp.Client, FireDAC.DApt, FireDAC.VCLUI.Wait, untConexao;
+
+type
+  TBaseDados = class
+  private
+    FConexao : TConexao;
+
+    constructor Create;
+    function ObterQry: TFDQuery;
+    procedure CriarTabela(tabela: string);
+
+  public
+    class function NewInstance: TObject;
+    class function ObterInstancia: TBaseDados;
+    procedure ValidarObjetosBaseDados;
+
+  end;
+
+const
+  TABELAS: TArray<string> = ['transacao'];
+
+var
+  Instancia: TBaseDados;
+
+implementation
+
+{TBaseDados}
+
+constructor TBaseDados.Create;
+begin
+  inherited Create;
+  FConexao := TConexao.ObterInstancia;
+end;
+
+class function TBaseDados.NewInstance: TObject;
+begin
+  if not Assigned(Instancia) then
+    Instancia := TBaseDados(inherited NewInstance);
+
+  result := Instancia;
+end;
+
+class function TBaseDados.ObterInstancia: TBaseDados;
+begin
+  result := TBaseDados.Create()
+end;
+
+function TBaseDados.ObterQry: TFDQuery;
+begin
+  result := TFDQuery.Create(nil);
+  result.name := 'qryBaseDados';
+  result.Connection := FConexao.Conexao;
+  result.ConnectionName := FConexao.Conexao.Name;
+end;
+
+procedure TBaseDados.CriarTabela(tabela: string);
+var
+  qry: TFDQuery;
+begin
+  qry := ObterQry;
+
+  try
+    if tabela = 'transacao' then
+    begin
+      qry.Close;
+      qry.SQL.Clear;
+      qry.SQL.Add(' create table transacao( ');
+      qry.SQL.Add('   id integer primary key autoincrement, ');
+      qry.SQL.Add('   nome varchar(50) not null, ');
+      qry.SQL.Add('   valor real not null, ');
+      qry.SQL.Add('   data text not null, ');
+      qry.SQL.Add('   tipo integer not null ');
+      qry.SQL.Add(' ) ');
+      qry.ExecSQL;
+    end;
+  finally
+    FreeAndNil(qry);
+  end;
+end;
+
+procedure TBaseDados.ValidarObjetosBaseDados;
+var
+  tabela: string;
+  qry: TFDQuery;
+begin
+  qry := ObterQry;
+
+  try
+    for tabela in TABELAS do
+    begin
+      qry.Close;
+      qry.SQL.Clear;
+      qry.SQL.Add(' select 1 from sqlite_master ');
+      qry.SQL.Add(' where type = ' + QuotedStr('table'));
+      qry.SQL.Add(' and tableName = ' + QuotedStr(tabela));
+      qry.Open();
+
+      if qry.Eof then
+        CriarTabela(tabela);
+    end;
+  finally
+    FreeAndNil(qry);
+  end;
+end;
+
+end.

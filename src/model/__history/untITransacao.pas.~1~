@@ -1,0 +1,12 @@
+unit untITransacao;
+
+interface
+
+type
+  ITransacao = Interface
+
+  End;
+
+implementation
+
+end.

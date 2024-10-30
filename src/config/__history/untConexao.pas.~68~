@@ -1,0 +1,54 @@
+unit untConexao;
+
+interface
+
+uses
+  SysUtils, FireDAC.Comp.Client, FireDAC.Phys.SQLite, FireDAC.Stan.Def, untConfig;
+
+type
+  TConexao = class
+  private
+    class var FInstance: TConexao;
+    FConexao: TFDConnection;
+    constructor Create;
+
+  public
+    property Conexao: TFDConnection read FConexao;
+    class function GetInstance: TConexao;
+
+  end;
+
+implementation
+
+{TConexao}
+
+constructor TConexao.Create;
+begin
+  inherited Create;
+
+  FConexao := TFDConnection.Create(nil);
+  FConexao.Name := 'conexao';
+  FConexao.DriverName := DRIVER_NAME;
+  FConexao.Params.Database := DATABASE;
+  FConexao.Connected := true;
+end;
+
+class function TConexao.NewInstance: TObject;
+begin
+  if not Assigned(Instancia) then
+    Instancia := TConexao(inherited NewInstance);
+
+  result := Instancia;
+end;
+
+class function TConexao.ObterInstancia: TConexao;
+begin
+  result := TConexao.Create;
+end;
+
+initialization
+
+finalization
+  FreeAndNil(Instancia);
+
+end.

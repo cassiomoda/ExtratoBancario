@@ -1,0 +1,30 @@
+unit untTransacao;
+
+interface
+
+uses
+  untITransacao, untTipoTransacao;
+
+type
+  TTransacao = class(TInterfacedObject, ITransacao)
+  private
+    FId: Int64;
+    FNome: String;
+    FValor: Real;
+    FData: TDateTime;
+    FTipo: TTipoTransacao;
+
+    procedure SetId(const value: int64);
+    procedure SetNome(const value: string);
+    procedure SetValor(const value: Real);
+    procedure SetData(const value: TDateTime);
+    procedure SetTipo(const value: TTipoTransacao);
+  public
+    property Id: int64 read FId write SetId;
+
+    function ObterValor: Real;
+  end;
+
+implementation
+
+end.

@@ -1,0 +1,94 @@
+unit untConfig;
+
+interface
+
+type
+  TConfig = class
+  private
+    FDriverName: string;
+    FServidor: string;
+    FPorta: Integer;
+    FBaseDados: string;
+    FUsuario: string;
+    FSenha: string;
+
+    constructor Create;
+    procedure SetDriverName(const value: string);
+    procedure SetServidor(const value: string);
+    procedure SetPorta(const value: Integer);
+    procedure SetBaseDados(const value: string);
+    procedure SetUsuario(const value: string);
+    procedure SetSenha(const value: string);
+
+  public
+    property DriverName: string read FDriverName write SetDriverName;
+    property Servidor: string read FServidor write SetServidor;
+    property Porta: Integer read FPorta write SetPorta;
+    property BaseDados: string read FBaseDados write SetBaseDados;
+    property Usuario: string read FUsuario write SetUsuario;
+    property Senha: string read FSenha write SetSenha;
+
+    class function NewInstance: TObject;
+    class function ObterInstancia: TConfig;
+
+  end;
+
+var
+  Instancia: TConfig;
+
+implementation
+
+uses
+  SysUtils;
+
+{TConfig}
+
+constructor TConfig.Create;
+begin
+  inherited Create;
+end;
+
+class function TConfig.NewInstance: TObject;
+begin
+  if not Assigned(Instancia) then
+    Instancia := TConfig(inherited NewInstance);
+
+  result := Instancia;
+end;
+
+class function TConfig.ObterInstancia: TConfig;
+begin
+  result := TConfig.Create;
+end;
+
+procedure TConfig.SetServidor(const value: string);
+begin
+  FServidor := value;
+end;
+
+procedure TConfig.SetPorta(const value: Integer);
+begin
+  FPorta := value;
+end;
+
+procedure TConfig.SetBaseDados(const value: string);
+begin
+  FBaseDados := value;
+end;
+
+procedure TConfig.SetUsuario(const value: string);
+begin
+  FUsuario := value;
+end;
+
+procedure TConfig.SetSenha(const value: string);
+begin
+  FSenha := value;
+end;
+
+initialization
+
+finalization
+  FreeAndNil(Instancia);
+
+end.
