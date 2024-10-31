@@ -4,7 +4,8 @@ interface
 
 uses
   System.Generics.Collections, SysUtils, FireDAC.Comp.Client, FireDAC.DApt,
-  FireDAC.VCLUI.Wait, FireDAC.Stan.Async, ConnectionManager, Transacao, TipoTransacaoEnum;
+  FireDAC.VCLUI.Wait, FireDAC.Stan.Async, ConnectionManager, Transacao,
+  TipoTransacaoEnum;
 
 type
   TTransacaoRepository = class
@@ -12,6 +13,7 @@ type
     class var FInstance: TTransacaoRepository;
     constructor Create;
     function ObterQry: TFDQuery;
+    function ConverterStrToDateTime(dataStr: string): TDateTime;
     function RowToTransacaoObj(qry: TFDQuery): TTransacao;
 
   public
@@ -25,6 +27,7 @@ type
     function Localizar(nome: string): TObjectList<TTransacao>; overload;
     function Localizar(data: TDateTime): TObjectList<TTransacao>; overload;
     function Localizar(dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>; overload;
+    function Localizar(nome: string; dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>; overload;
 
   end;
 
@@ -62,13 +65,26 @@ begin
   result.SQL.Clear;
 end;
 
+function TTransacaoRepository.ConverterStrToDateTime(dataStr: string): TDateTime;
+var
+  format: TFormatSettings;
+begin
+  if dataStr <> '' then
+  begin
+    format := TFormatSettings.Create;
+    format.DateSeparator := '-';
+    format.ShortDateFormat := 'yyyy-MM-dd';
+    result := StrToDateTime(dataStr, format);
+  end;
+end;
+
 function TTransacaoRepository.RowToTransacaoObj(qry: TFDQuery): TTransacao;
 begin
   result := TTransacao.Create;
   result.Id := qry.FieldByName('id').AsInteger;
   result.Nome := qry.FieldByName('nome').AsString;
   result.Valor := qry.FieldByName('valor').AsFloat;
-  result.Data := qry.FieldByName('data').AsDateTime;
+  result.Data := ConverterStrToDateTime(qry.FieldByName('data').AsString);
   result.Tipo := TTipoTransacaoEnum(qry.FieldByName('tipo').AsInteger);
 end;
 
@@ -99,9 +115,9 @@ begin
 
   try
     qry.SQL.Add(' update ' + TABLE_NAME + ' set ');
-    qry.SQL.Add('   nome = :nome ');
-    qry.SQL.Add('   valor = :valor ');
-    qry.SQL.Add('   data = :data ');
+    qry.SQL.Add('   nome = :nome, ');
+    qry.SQL.Add('   valor = :valor, ');
+    qry.SQL.Add('   data = :data, ');
     qry.SQL.Add('   tipo = :tipo ');
     qry.SQL.Add(' where id = :id ');
     qry.ParamByName('nome').AsString := transacao.Nome;
@@ -150,7 +166,6 @@ begin
       begin
         transacao := RowToTransacaoObj(qry);
         result.Add(transacao);
-        FreeAndNil(transacao);
         qry.Next;
       end;
     end;
@@ -189,8 +204,7 @@ begin
 
   try
     qry.SQL.Add(' select * from ' + TABLE_NAME);
-    qry.SQL.Add(' where nome = :nome ');
-    qry.ParamByName('nome').AsString := nome;
+    qry.SQL.Add(' where nome like ' + QuotedStr('%' + nome + '%'));
     qry.Open();
     qry.First;
 
@@ -250,6 +264,38 @@ begin
   try
     qry.SQL.Add(' select * from ' + TABLE_NAME);
     qry.SQL.Add(' where data between :dataInicial and :dataFinal ');
+    qry.ParamByName('dataInicial').AsDateTime := dataInicial;
+    qry.ParamByName('dataFinal').AsDateTime := dataFinal;
+    qry.Open();
+    qry.First;
+
+    if not qry.Eof then
+    begin
+      while not qry.Eof do
+      begin
+        transacao := RowToTransacaoObj(qry);
+        result.Add(transacao);
+        FreeAndNil(transacao);
+        qry.Next;
+      end;
+    end;
+  finally
+    FreeAndNil(qry);
+  end;
+end;
+
+function TTransacaoRepository.Localizar(nome: string; dataInicial: TDateTime; dataFinal: TDateTime): TObjectList<TTransacao>;
+var
+  qry: TFDQuery;
+  transacao: TTransacao;
+begin
+  result := TObjectList<TTransacao>.Create;
+  qry := ObterQry;
+
+  try
+    qry.SQL.Add(' select * from ' + TABLE_NAME);
+    qry.SQL.Add(' where nome like ' + QuotedStr('%' + nome + '%'));
+    qry.SQL.Add(' and data between :dataInicial and :dataFinal ');
     qry.ParamByName('dataInicial').AsDateTime := dataInicial;
     qry.ParamByName('dataFinal').AsDateTime := dataFinal;
     qry.Open();

@@ -2,7 +2,7 @@ program ExtratoBancario;
 
 uses
   Vcl.Forms,
-  Main in 'src\Main.pas' {frmMain},
+  MainForm in 'src\MainForm.pas' {frmMain},
   Transacao in 'src\model\Transacao.pas',
   TipoTransacaoEnum in 'src\enums\TipoTransacaoEnum.pas',
   ListaTransacoes in 'src\dto\ListaTransacoes.pas',
@@ -11,7 +11,8 @@ uses
   ConnectionManager in 'src\config\ConnectionManager.pas',
   DBManager in 'src\config\DBManager.pas',
   TransacaoRepository in 'src\repository\TransacaoRepository.pas',
-  TransacaoService in 'src\service\TransacaoService.pas';
+  TransacaoService in 'src\service\TransacaoService.pas',
+  TransacaoForm in 'src\TransacaoForm.pas' {frmTransacao};
 
 {$R *.res}
 

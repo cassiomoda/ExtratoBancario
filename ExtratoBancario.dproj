@@ -125,7 +125,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="src\Main.pas">
+        <DCCReference Include="src\MainForm.pas">
             <Form>frmMain</Form>
             <FormType>dfm</FormType>
         </DCCReference>
@@ -138,6 +138,10 @@
         <DCCReference Include="src\config\DBManager.pas"/>
         <DCCReference Include="src\repository\TransacaoRepository.pas"/>
         <DCCReference Include="src\service\TransacaoService.pas"/>
+        <DCCReference Include="src\TransacaoForm.pas">
+            <Form>frmTransacao</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

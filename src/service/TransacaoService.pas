@@ -20,6 +20,11 @@ type
     function Alterar(transacao: TTransacao): string;
     function Excluir(transacao: TTransacao): string;
     procedure PreencherListaTransacoes;
+    function Localizar(id: Integer): TTransacao; overload;
+    function Localizar(nome: string): TObjectList<TTransacao>; overload;
+    function Localizar(data: TDateTime): TObjectList<TTransacao>; overload;
+    function Localizar(dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>; overload;
+    function Localizar(nome: string; dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>; overload;
 
   end;
 
@@ -50,7 +55,9 @@ end;
 
 function TTransacaoService.AdicionarQuebraLinha(str: string): string;
 begin
-  if str.Trim <> '' then
+  result := str;
+
+  if (str.Trim <> '') and (str <> 'OK') then
     result := str + #13#10;
 end;
 
@@ -90,13 +97,9 @@ begin
   repository := TTransacaoRepository.GetInstance;
 
   try
-    try
-      repository.Inserir(transacao);
-    except
-      result := 'Ocorreu um erro ao tentar inserir a transação.';
-    end;
-  finally
-    FreeAndNil(repository);
+    repository.Inserir(transacao);
+  except
+    result := 'Ocorreu um erro ao tentar inserir a transação.';
   end;
 end;
 
@@ -118,13 +121,9 @@ begin
   repository := TTransacaoRepository.GetInstance;
 
   try
-    try
-      repository.Alterar(transacao);
-    except
-      result := 'Ocorreu um erro ao tentar inserir a transação.';
-    end;
-  finally
-    FreeAndNil(repository);
+    repository.Alterar(transacao);
+  except
+    result := 'Ocorreu um erro ao tentar inserir a transação.';
   end;
 end;
 
@@ -141,14 +140,10 @@ begin
   repository := TTransacaoRepository.GetInstance;
 
   try
-    try
-      repository.Excluir(transacao.Id);
-      result := 'OK';
-    except
-      result := 'Ocorreu um erro ao tentar inserir a transação.';
-    end;
-  finally
-    FreeAndNil(repository);
+    repository.Excluir(transacao.Id);
+    result := 'OK';
+  except
+    result := 'Ocorreu um erro ao tentar inserir a transação.';
   end;
 end;
 
@@ -161,35 +156,52 @@ var
 begin
   repository := TTransacaoRepository.GetInstance;
   listaTransacoes := TListaTransacoes.GetInstance;
+  lista := repository.ListarTodas;
 
-  try
-    lista := repository.ListarTodas;
-
-    for transacao in lista do
-    begin
-      listaTransacoes.InserirTransacao(transacao);
-    end;
-
-    transacao := TTransacao.Create;
-    transacao.Id := 1;
-    transacao.Nome := 'teste';
-    transacao.Valor := 12.5;
-    transacao.Data := now;
-    transacao.Tipo := TTipoTransacaoEnum.credito;
+  for transacao in lista do
+  begin
     listaTransacoes.InserirTransacao(transacao);
-
-    transacao := TTransacao.Create;
-    transacao.Id := 2;
-    transacao.Nome := 'Teste 2';
-    transacao.Valor := 255.5;
-    transacao.Data := now;
-    transacao.Tipo := TTipoTransacaoEnum.debito;
-    listaTransacoes.InserirTransacao(transacao);
-
-  finally
-    FreeAndNil(repository);
-    FreeAndNil(lista);
   end;
+end;
+
+function TTransacaoService.Localizar(id: Integer): TTransacao;
+var
+  repository: TTransacaoRepository;
+begin
+  repository := TTransacaoRepository.GetInstance;
+  result := repository.Localizar(id);
+end;
+
+function TTransacaoService.Localizar(nome: string): TObjectList<TTransacao>;
+var
+  repository: TTransacaoRepository;
+begin
+  repository := TTransacaoRepository.GetInstance;
+  result := repository.Localizar(nome);
+end;
+
+function TTransacaoService.Localizar(data: TDateTime): TObjectList<TTransacao>;
+var
+  repository: TTransacaoRepository;
+begin
+  repository := TTransacaoRepository.GetInstance;
+  result := repository.Localizar(data);
+end;
+
+function TTransacaoService.Localizar(dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>;
+var
+  repository: TTransacaoRepository;
+begin
+  repository := TTransacaoRepository.GetInstance;
+  result := repository.Localizar(dataInicial, dataFinal);
+end;
+
+function TTransacaoService.Localizar(nome: string; dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>;
+var
+  repository: TTransacaoRepository;
+begin
+  repository := TTransacaoRepository.GetInstance;
+  result := repository.Localizar(nome, dataInicial, dataFinal);
 end;
 
 end.
