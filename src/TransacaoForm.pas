@@ -20,6 +20,7 @@ type
     btnSalvar: TBitBtn;
     procedure btnSalvarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure edtValorKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -34,6 +35,12 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TfrmTransacao.edtValorKeyPress(Sender: TObject; var Key: Char);
+begin
+  if not (Key in ['0'..'9', ',', #8]) then
+    Key := #0;
+end;
 
 procedure TfrmTransacao.FormShow(Sender: TObject);
 begin

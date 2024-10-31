@@ -14,6 +14,7 @@ type
     procedure CriarTabela(tabela: string);
 
   public
+    destructor Destroy; override;
     class function GetInstance: TDBManager;
     class procedure FreeInstance;
     procedure ValidarObjetosBaseDados;
@@ -34,6 +35,11 @@ uses
 constructor TDBManager.Create;
 begin
   inherited Create;
+end;
+
+destructor TDBManager.Destroy;
+begin
+  inherited Destroy;
 end;
 
 class function TDBManager.GetInstance: TDBManager;

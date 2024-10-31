@@ -14,6 +14,7 @@ type
   public
     property Transacoes: TDictionary<Integer, TTransacao> read FTransacoes;
     constructor Create;
+    destructor Destroy; override;
     class function GetInstance: TListaTransacoes;
     class procedure FreeInstance;
     procedure InserirTransacao(transacao: TTransacao);
@@ -32,6 +33,12 @@ constructor TListaTransacoes.Create;
 begin
   inherited Create;
   FTransacoes := TDictionary<Integer, TTransacao>.Create;
+end;
+
+destructor TListaTransacoes.Destroy;
+begin
+  FreeAndNil(FTransacoes);
+  inherited Destroy;
 end;
 
 class function TListaTransacoes.GetInstance: TListaTransacoes;
@@ -65,8 +72,7 @@ end;
 
 procedure TListaTransacoes.LimparLista;
 begin
-  FTransacoes.Clear;
-  FTransacoes := Nil;
+  FreeAndNil(FTransacoes);
   FTransacoes := TDictionary<Integer, TTransacao>.Create;
 end;
 

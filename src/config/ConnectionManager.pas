@@ -14,6 +14,7 @@ type
 
   public
     property Connection: TFDConnection read FConnection;
+    destructor Destroy; override;
     class function GetInstance: TConnectionManager;
     class procedure FreeInstance;
 
@@ -32,6 +33,12 @@ begin
   FConnection.DriverName := DRIVER_NAME;
   FConnection.Params.Database := DATABASE;
   FConnection.Connected := true;
+end;
+
+destructor TConnectionManager.Destroy;
+begin
+  FreeAndNil(FConnection);
+  inherited Destroy;
 end;
 
 class function TConnectionManager.GetInstance: TConnectionManager;

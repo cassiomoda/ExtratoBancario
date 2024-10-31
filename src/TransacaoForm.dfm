@@ -48,8 +48,8 @@ object frmTransacao: TfrmTransacao
     Width = 150
     Height = 31
     MaxLength = 10
-    NumbersOnly = True
     TabOrder = 1
+    OnKeyPress = edtValorKeyPress
   end
   object edtData: TMaskEdit
     Left = 32

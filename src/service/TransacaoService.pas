@@ -13,6 +13,7 @@ type
     function AdicionarQuebraLinha(str: string): string;
 
   public
+    destructor Destroy; override;
     class function GetInstance: TTransacaoService;
     class procedure FreeInstance;
     function Validar(transacao: TTransacao): string;
@@ -34,6 +35,11 @@ uses
 constructor TTransacaoService.Create;
 begin
   inherited Create;
+end;
+
+destructor TTransacaoService.Destroy;
+begin
+  inherited Destroy;
 end;
 
 class function TTransacaoService.GetInstance: TTransacaoService;

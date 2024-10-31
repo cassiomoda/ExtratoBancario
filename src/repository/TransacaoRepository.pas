@@ -18,6 +18,7 @@ type
     function AddWhereAnd(str: string): string;
 
   public
+    destructor Destroy; override;
     class function GetInstance: TTransacaoRepository;
     class procedure FreeInstance;
     procedure Inserir(transacao: TTransacao);
@@ -38,6 +39,11 @@ implementation
 constructor TTransacaoRepository.Create;
 begin
   inherited Create;
+end;
+
+destructor TTransacaoRepository.Destroy;
+begin
+  inherited Destroy;
 end;
 
 class function TTransacaoRepository.GetInstance: TTransacaoRepository;

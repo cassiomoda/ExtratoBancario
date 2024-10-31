@@ -95,7 +95,7 @@ object frmMain: TfrmMain
     Left = 0
     Top = 113
     Width = 624
-    Height = 271
+    Height = 230
     Align = alClient
     FixedColor = clGray
     FixedCols = 0
@@ -154,6 +154,36 @@ object frmMain: TfrmMain
       Images = ImageList
       TabOrder = 2
       OnClick = btnExcluirClick
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 343
+    Width = 624
+    Height = 41
+    Align = alBottom
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 3
+    ExplicitLeft = 544
+    ExplicitTop = 336
+    ExplicitWidth = 185
+    object lblSaldo: TLabel
+      Left = 1
+      Top = 1
+      Width = 622
+      Height = 39
+      Align = alClient
+      Alignment = taRightJustify
+      Caption = 'R$ 0.00    '
+      Layout = tlCenter
+      ExplicitLeft = 548
+      ExplicitWidth = 75
+      ExplicitHeight = 23
     end
   end
   object ImageList: TImageList
