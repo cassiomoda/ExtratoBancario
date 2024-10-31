@@ -3,7 +3,7 @@ unit TransacaoService;
 interface
 
 uses
-  SysUtils, System.Generics.Collections, Transacao;
+  SysUtils, System.Generics.Collections, Transacao, Filtro;
 
 type
   TTransacaoService = class
@@ -19,12 +19,8 @@ type
     function Inserir(transacao: TTransacao): string;
     function Alterar(transacao: TTransacao): string;
     function Excluir(transacao: TTransacao): string;
-    procedure PreencherListaTransacoes;
-    function Localizar(id: Integer): TTransacao; overload;
-    function Localizar(nome: string): TObjectList<TTransacao>; overload;
-    function Localizar(data: TDateTime): TObjectList<TTransacao>; overload;
-    function Localizar(dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>; overload;
-    function Localizar(nome: string; dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>; overload;
+    procedure PreencherListaTransacoes; overload;
+    procedure PreencherListaTransacoes(filtro: TFiltro); overload;
 
   end;
 
@@ -156,6 +152,7 @@ var
 begin
   repository := TTransacaoRepository.GetInstance;
   listaTransacoes := TListaTransacoes.GetInstance;
+  listaTransacoes.LimparLista;
   lista := repository.ListarTodas;
 
   for transacao in lista do
@@ -164,44 +161,22 @@ begin
   end;
 end;
 
-function TTransacaoService.Localizar(id: Integer): TTransacao;
+procedure TTransacaoService.PreencherListaTransacoes(filtro: TFiltro);
 var
   repository: TTransacaoRepository;
+  listaTransacoes: TListaTransacoes;
+  lista: TObjectList<TTransacao>;
+  transacao: TTransacao;
 begin
   repository := TTransacaoRepository.GetInstance;
-  result := repository.Localizar(id);
-end;
+  listaTransacoes := TListaTransacoes.GetInstance;
+  listaTransacoes.LimparLista;
+  lista := repository.Localizar(filtro);
 
-function TTransacaoService.Localizar(nome: string): TObjectList<TTransacao>;
-var
-  repository: TTransacaoRepository;
-begin
-  repository := TTransacaoRepository.GetInstance;
-  result := repository.Localizar(nome);
-end;
-
-function TTransacaoService.Localizar(data: TDateTime): TObjectList<TTransacao>;
-var
-  repository: TTransacaoRepository;
-begin
-  repository := TTransacaoRepository.GetInstance;
-  result := repository.Localizar(data);
-end;
-
-function TTransacaoService.Localizar(dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>;
-var
-  repository: TTransacaoRepository;
-begin
-  repository := TTransacaoRepository.GetInstance;
-  result := repository.Localizar(dataInicial, dataFinal);
-end;
-
-function TTransacaoService.Localizar(nome: string; dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>;
-var
-  repository: TTransacaoRepository;
-begin
-  repository := TTransacaoRepository.GetInstance;
-  result := repository.Localizar(nome, dataInicial, dataFinal);
+  for transacao in lista do
+  begin
+    listaTransacoes.InserirTransacao(transacao);
+  end;
 end;
 
 end.

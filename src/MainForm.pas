@@ -5,8 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, DBManager, ConnectionManager, TransacaoService,
-  ListaTransacoes, Transacao, TipoTransacaoEnum, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  System.ImageList, Vcl.ImgList, Vcl.Grids;
+  TransacaoRepository, ListaTransacoes, Transacao, TipoTransacaoEnum, Filtro, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, System.ImageList, Vcl.ImgList, Vcl.Grids;
 
 type
   TfrmMain = class(TForm)
@@ -31,11 +31,13 @@ type
     procedure btnInserirClick(Sender: TObject);
     procedure btnAlterarClick(Sender: TObject);
     procedure btnExcluirClick(Sender: TObject);
+    procedure btnFiltrarClick(Sender: TObject);
   private
     { Private declarations }
     procedure PreencherCabecalhoGridTransacoes;
     procedure PreencherGridTransacoes;
     function GetTransacaoSelecionada: TTransacao;
+    function GetFiltros: TFiltro;
   public
     { Public declarations }
   end;
@@ -98,6 +100,12 @@ begin
   PreencherGridTransacoes;
 end;
 
+procedure TfrmMain.btnFiltrarClick(Sender: TObject);
+begin
+  TTransacaoService.GetInstance.PreencherListaTransacoes(GetFiltros);
+  PreencherGridTransacoes;
+end;
+
 procedure TfrmMain.btnInserirClick(Sender: TObject);
 begin
   if frmTransacao = nil then
@@ -113,7 +121,7 @@ begin
 
   if frmTransacao.ModalResult = mrOk then
   begin
-    TTransacaoService.GetInstance.PreencherListaTransacoes;
+    TTransacaoService.GetInstance.PreencherListaTransacoes(GetFiltros);
     PreencherGridTransacoes;
   end;
 
@@ -123,7 +131,9 @@ end;
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   TDBManager.FreeInstance;
+  TListaTransacoes.FreeInstance;
   TTransacaoService.FreeInstance;
+  TTransacaoRepository.FreeInstance;
   TConnectionManager.FreeInstance;
 end;
 
@@ -223,6 +233,20 @@ begin
 
   if result.Valor < 0 then
     result.Valor := result.Valor * -1;
+end;
+
+function TfrmMain.GetFiltros: TFiltro;
+begin
+  result := TFiltro.Create;
+
+  if Trim(edtFiltroNome.Text) <> '' then
+    result.Nome := edtFiltroNome.Text;
+
+  if edtFiltroDataInicial.Text <> '  /  /    ' then
+    result.DataInicial := StrToDateTime(edtFiltroDataInicial.Text);
+
+  if edtFiltroDataFinal.Text <> '  /  /    ' then
+    result.DataFinal := StrToDateTime(edtFiltroDataFinal.Text);
 end;
 
 end.

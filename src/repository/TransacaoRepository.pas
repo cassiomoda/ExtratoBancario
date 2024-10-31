@@ -5,7 +5,7 @@ interface
 uses
   System.Generics.Collections, SysUtils, FireDAC.Comp.Client, FireDAC.DApt,
   FireDAC.VCLUI.Wait, FireDAC.Stan.Async, ConnectionManager, Transacao,
-  TipoTransacaoEnum;
+  TipoTransacaoEnum, Filtro;
 
 type
   TTransacaoRepository = class
@@ -15,6 +15,7 @@ type
     function ObterQry: TFDQuery;
     function ConverterStrToDateTime(dataStr: string): TDateTime;
     function RowToTransacaoObj(qry: TFDQuery): TTransacao;
+    function AddWhereAnd(str: string): string;
 
   public
     class function GetInstance: TTransacaoRepository;
@@ -23,11 +24,7 @@ type
     procedure Alterar(transacao: TTransacao);
     procedure Excluir(id: Integer);
     function ListarTodas: TObjectList<TTransacao>;
-    function Localizar(id: integer): TTransacao; overload;
-    function Localizar(nome: string): TObjectList<TTransacao>; overload;
-    function Localizar(data: TDateTime): TObjectList<TTransacao>; overload;
-    function Localizar(dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>; overload;
-    function Localizar(nome: string; dataInicial, dataFinal: TDateTime): TObjectList<TTransacao>; overload;
+    function Localizar(filtro: TFiltro): TObjectList<TTransacao>;
 
   end;
 
@@ -86,6 +83,16 @@ begin
   result.Valor := qry.FieldByName('valor').AsFloat;
   result.Data := ConverterStrToDateTime(qry.FieldByName('data').AsString);
   result.Tipo := TTipoTransacaoEnum(qry.FieldByName('tipo').AsInteger);
+end;
+
+function TTransacaoRepository.AddWhereAnd(str: string): string;
+begin
+  result := str;
+
+  if result = '' then
+    result := ' where '
+  else
+    result := result + ' and '
 end;
 
 procedure TTransacaoRepository.Inserir(transacao: TTransacao);
@@ -174,98 +181,51 @@ begin
   end;
 end;
 
-function TTransacaoRepository.Localizar(id: Integer): TTransacao;
-var
-  qry: TFDQuery;
-begin
-  qry := ObterQry;
-
-  try
-    qry.SQL.Add(' select * from ' + TABLE_NAME);
-    qry.SQL.Add(' where id = :id ');
-    qry.ParamByName('id').AsInteger := id;
-    qry.Open();
-    qry.First;
-
-    if not qry.Eof then
-      result := RowToTransacaoObj(qry);
-  finally
-    FreeAndNil(qry);
-  end;
-end;
-
-function TTransacaoRepository.Localizar(nome: string): TObjectList<TTransacao>;
+function TTransacaoRepository.Localizar(filtro: TFiltro): TObjectList<TTransacao>;
 var
   qry: TFDQuery;
   transacao: TTransacao;
+  where: string;
 begin
   result := TObjectList<TTransacao>.Create;
   qry := ObterQry;
 
   try
-    qry.SQL.Add(' select * from ' + TABLE_NAME);
-    qry.SQL.Add(' where nome like ' + QuotedStr('%' + nome + '%'));
-    qry.Open();
-    qry.First;
+    if filtro.Nome.Trim <> '' then
+      where := ' where nome = :nome ';
 
-    if not qry.Eof then
+    if (filtro.DataInicial <> 0) and (filtro.DataFinal = 0) then
     begin
-      while not qry.Eof do
-      begin
-        transacao := RowToTransacaoObj(qry);
-        result.Add(transacao);
-        FreeAndNil(transacao);
-        qry.Next;
-      end;
+      where := AddWhereAnd(where);
+      where := where + ' data >= :dataInicial ';
+    end
+    else if (filtro.DataInicial = 0) and (filtro.DataFinal <> 0) then
+    begin
+      where := AddWhereAnd(where);
+      where := where + ' data <= :dataFinal ';
+    end
+    else if (filtro.DataInicial <> 0) and (filtro.DataFinal <> 0) then
+    begin
+      where := AddWhereAnd(where);
+      where := where + ' data between :dataInicial and :dataFinal ';
     end;
-  finally
-    FreeAndNil(qry);
-  end;
-end;
 
-function TTransacaoRepository.Localizar(data: TDateTime): TObjectList<TTransacao>;
-var
-  qry: TFDQuery;
-  transacao: TTransacao;
-begin
-  result := TObjectList<TTransacao>.Create;
-  qry := ObterQry;
-
-  try
     qry.SQL.Add(' select * from ' + TABLE_NAME);
-    qry.SQL.Add(' where data = :data ');
-    qry.ParamByName('data').AsDateTime := data;
-    qry.Open();
-    qry.First;
+    qry.SQL.Add(where);
 
-    if not qry.Eof then
+    if filtro.Nome.Trim <> '' then
+      qry.ParamByName('nome').AsString := filtro.Nome;
+
+    if (filtro.DataInicial <> 0) and (filtro.DataFinal = 0) then
+      qry.ParamByName('dataInicial').AsDateTime := filtro.DataInicial
+    else if (filtro.DataInicial = 0) and (filtro.DataFinal <> 0) then
+      qry.ParamByName('dataFinal').AsDateTime := filtro.DataFinal
+    else if (filtro.DataInicial <> 0) and (filtro.DataFinal <> 0) then
     begin
-      while not qry.Eof do
-      begin
-        transacao := RowToTransacaoObj(qry);
-        result.Add(transacao);
-        FreeAndNil(transacao);
-        qry.Next;
-      end;
+      qry.ParamByName('dataInicial').AsDateTime := filtro.DataInicial;
+      qry.ParamByName('dataFinal').AsDateTime := filtro.DataFinal;
     end;
-  finally
-    FreeAndNil(qry);
-  end;
-end;
 
-function TTransacaoRepository.Localizar(dataInicial: TDateTime; dataFinal: TDateTime): TObjectList<TTransacao>;
-var
-  qry: TFDQuery;
-  transacao: TTransacao;
-begin
-  result := TObjectList<TTransacao>.Create;
-  qry := ObterQry;
-
-  try
-    qry.SQL.Add(' select * from ' + TABLE_NAME);
-    qry.SQL.Add(' where data between :dataInicial and :dataFinal ');
-    qry.ParamByName('dataInicial').AsDateTime := dataInicial;
-    qry.ParamByName('dataFinal').AsDateTime := dataFinal;
     qry.Open();
     qry.First;
 
@@ -275,39 +235,6 @@ begin
       begin
         transacao := RowToTransacaoObj(qry);
         result.Add(transacao);
-        FreeAndNil(transacao);
-        qry.Next;
-      end;
-    end;
-  finally
-    FreeAndNil(qry);
-  end;
-end;
-
-function TTransacaoRepository.Localizar(nome: string; dataInicial: TDateTime; dataFinal: TDateTime): TObjectList<TTransacao>;
-var
-  qry: TFDQuery;
-  transacao: TTransacao;
-begin
-  result := TObjectList<TTransacao>.Create;
-  qry := ObterQry;
-
-  try
-    qry.SQL.Add(' select * from ' + TABLE_NAME);
-    qry.SQL.Add(' where nome like ' + QuotedStr('%' + nome + '%'));
-    qry.SQL.Add(' and data between :dataInicial and :dataFinal ');
-    qry.ParamByName('dataInicial').AsDateTime := dataInicial;
-    qry.ParamByName('dataFinal').AsDateTime := dataFinal;
-    qry.Open();
-    qry.First;
-
-    if not qry.Eof then
-    begin
-      while not qry.Eof do
-      begin
-        transacao := RowToTransacaoObj(qry);
-        result.Add(transacao);
-        FreeAndNil(transacao);
         qry.Next;
       end;
     end;

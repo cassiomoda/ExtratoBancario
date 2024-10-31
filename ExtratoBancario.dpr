@@ -12,7 +12,8 @@ uses
   DBManager in 'src\config\DBManager.pas',
   TransacaoRepository in 'src\repository\TransacaoRepository.pas',
   TransacaoService in 'src\service\TransacaoService.pas',
-  TransacaoForm in 'src\TransacaoForm.pas' {frmTransacao};
+  TransacaoForm in 'src\TransacaoForm.pas' {frmTransacao},
+  Filtro in 'src\dto\Filtro.pas';
 
 {$R *.res}
 

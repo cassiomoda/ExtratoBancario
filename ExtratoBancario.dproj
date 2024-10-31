@@ -142,6 +142,7 @@
             <Form>frmTransacao</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="src\dto\Filtro.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

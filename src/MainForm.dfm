@@ -88,6 +88,7 @@ object frmMain: TfrmMain
       Images = ImageList
       Layout = blGlyphRight
       TabOrder = 3
+      OnClick = btnFiltrarClick
     end
   end
   object grdTransacoes: TStringGrid

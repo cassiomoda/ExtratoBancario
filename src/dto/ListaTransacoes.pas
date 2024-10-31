@@ -8,18 +8,18 @@ uses
 type
   TListaTransacoes = class(TInterfacedObject, TITransacao)
   private
-    FTransacoes: TDictionary<int64, TTransacao>;
+    FTransacoes: TDictionary<Integer, TTransacao>;
     class var FInstance: TListaTransacoes;
 
   public
-    property Transacoes: TDictionary<int64, TTransacao> read FTransacoes;
+    property Transacoes: TDictionary<Integer, TTransacao> read FTransacoes;
     constructor Create;
     class function GetInstance: TListaTransacoes;
     class procedure FreeInstance;
     procedure InserirTransacao(transacao: TTransacao);
-    procedure ExcluirTransacao(id: int64) overload;
+    procedure ExcluirTransacao(id: Integer) overload;
     procedure ExcluirTransacao(transacao: TTransacao) overload;
-
+    procedure LimparLista;
     function ObterValor: Real;
 
   end;
@@ -31,7 +31,7 @@ implementation
 constructor TListaTransacoes.Create;
 begin
   inherited Create;
-  FTransacoes := TDictionary<int64, TTransacao>.Create;
+  FTransacoes := TDictionary<Integer, TTransacao>.Create;
 end;
 
 class function TListaTransacoes.GetInstance: TListaTransacoes;
@@ -53,7 +53,7 @@ begin
     FTransacoes.Add(transacao.id, transacao);
 end;
 
-procedure TListaTransacoes.ExcluirTransacao(id: Int64);
+procedure TListaTransacoes.ExcluirTransacao(id: Integer);
 begin
   FTransacoes.Remove(id);
 end;
@@ -61,6 +61,13 @@ end;
 procedure TListaTransacoes.ExcluirTransacao(transacao: TTransacao);
 begin
   FTransacoes.Remove(transacao.Id);
+end;
+
+procedure TListaTransacoes.LimparLista;
+begin
+  FTransacoes.Clear;
+  FTransacoes := Nil;
+  FTransacoes := TDictionary<Integer, TTransacao>.Create;
 end;
 
 function TListaTransacoes.ObterValor: Real;
