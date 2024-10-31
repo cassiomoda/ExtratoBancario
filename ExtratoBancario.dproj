@@ -125,18 +125,19 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="src\untMain.pas">
+        <DCCReference Include="src\Main.pas">
             <Form>frmMain</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="src\model\untTransacao.pas"/>
-        <DCCReference Include="src\enums\untTipoTransacao.pas"/>
-        <DCCReference Include="src\dto\untListaTransacoes.pas"/>
-        <DCCReference Include="src\interfaces\untITransacao.pas"/>
-        <DCCReference Include="src\config\untConfig.pas"/>
-        <DCCReference Include="src\config\untConexao.pas"/>
-        <DCCReference Include="src\config\untBaseDados.pas"/>
-        <DCCReference Include="src\repository\untTransacaoRepository.pas"/>
+        <DCCReference Include="src\model\Transacao.pas"/>
+        <DCCReference Include="src\enums\TipoTransacaoEnum.pas"/>
+        <DCCReference Include="src\dto\ListaTransacoes.pas"/>
+        <DCCReference Include="src\interfaces\ITransacao.pas"/>
+        <DCCReference Include="src\config\Config.pas"/>
+        <DCCReference Include="src\config\ConnectionManager.pas"/>
+        <DCCReference Include="src\config\DBManager.pas"/>
+        <DCCReference Include="src\repository\TransacaoRepository.pas"/>
+        <DCCReference Include="src\service\TransacaoService.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

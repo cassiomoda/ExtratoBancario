@@ -2,19 +2,21 @@ program ExtratoBancario;
 
 uses
   Vcl.Forms,
-  untMain in 'src\untMain.pas' {frmMain},
-  untTransacao in 'src\model\untTransacao.pas',
-  untTipoTransacao in 'src\enums\untTipoTransacao.pas',
-  untListaTransacoes in 'src\dto\untListaTransacoes.pas',
-  untITransacao in 'src\interfaces\untITransacao.pas',
-  untConfig in 'src\config\untConfig.pas',
-  untConexao in 'src\config\untConexao.pas',
-  untBaseDados in 'src\config\untBaseDados.pas',
-  untTransacaoRepository in 'src\repository\untTransacaoRepository.pas';
+  Main in 'src\Main.pas' {frmMain},
+  Transacao in 'src\model\Transacao.pas',
+  TipoTransacaoEnum in 'src\enums\TipoTransacaoEnum.pas',
+  ListaTransacoes in 'src\dto\ListaTransacoes.pas',
+  ITransacao in 'src\interfaces\ITransacao.pas',
+  Config in 'src\config\Config.pas',
+  ConnectionManager in 'src\config\ConnectionManager.pas',
+  DBManager in 'src\config\DBManager.pas',
+  TransacaoRepository in 'src\repository\TransacaoRepository.pas',
+  TransacaoService in 'src\service\TransacaoService.pas';
 
 {$R *.res}
 
 begin
+  ReportMemoryLeaksOnShutdown := True;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.Title := 'ExtratoBancario';
