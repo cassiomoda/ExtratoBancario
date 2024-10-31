@@ -165,6 +165,8 @@ begin
   begin
     listaTransacoes.InserirTransacao(transacao);
   end;
+
+  FreeAndNil(lista);
 end;
 
 procedure TTransacaoService.PreencherListaTransacoes(filtro: TFiltro);
@@ -183,6 +185,8 @@ begin
   begin
     listaTransacoes.InserirTransacao(transacao);
   end;
+
+  FreeAndNil(lista);
 end;
 
 end.

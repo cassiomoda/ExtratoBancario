@@ -37,6 +37,7 @@ end;
 
 destructor TListaTransacoes.Destroy;
 begin
+  LimparLista;
   FreeAndNil(FTransacoes);
   inherited Destroy;
 end;
@@ -55,9 +56,20 @@ begin
 end;
 
 procedure TListaTransacoes.InserirTransacao(transacao: TTransacao);
+var
+  novaTransacao: TTransacao;
 begin
   if not FTransacoes.ContainsKey(transacao.Id) then
-    FTransacoes.Add(transacao.id, transacao);
+  begin
+    novaTransacao := TTransacao.Create;
+    novaTransacao.Id := transacao.Id;
+    novaTransacao.Nome := transacao.Nome;
+    novaTransacao.Valor := transacao.Valor;
+    novaTransacao.Data := transacao.Data;
+    novaTransacao.Tipo := transacao.Tipo;
+
+    FTransacoes.Add(novaTransacao.id, novaTransacao);
+  end;
 end;
 
 procedure TListaTransacoes.ExcluirTransacao(id: Integer);
@@ -66,12 +78,21 @@ begin
 end;
 
 procedure TListaTransacoes.ExcluirTransacao(transacao: TTransacao);
+var
+  transacaoOld: TTransacao;
 begin
+  transacaoOld := FTransacoes[transacao.Id];
+  FreeAndNil(transacaoOld);
   FTransacoes.Remove(transacao.Id);
 end;
 
 procedure TListaTransacoes.LimparLista;
+var
+  transacao: TTransacao;
 begin
+  for transacao in FTransacoes.Values do
+    FreeAndNil(transacao);
+
   FreeAndNil(FTransacoes);
   FTransacoes := TDictionary<Integer, TTransacao>.Create;
 end;

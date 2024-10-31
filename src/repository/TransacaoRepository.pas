@@ -198,7 +198,7 @@ begin
 
   try
     if filtro.Nome.Trim <> '' then
-      where := ' where nome = :nome ';
+      where := ' where nome like ' + QuotedStr('%' + filtro.Nome + '%');
 
     if (filtro.DataInicial <> 0) and (filtro.DataFinal = 0) then
     begin
@@ -218,9 +218,6 @@ begin
 
     qry.SQL.Add(' select * from ' + TABLE_NAME);
     qry.SQL.Add(where);
-
-    if filtro.Nome.Trim <> '' then
-      qry.ParamByName('nome').AsString := filtro.Nome;
 
     if (filtro.DataInicial <> 0) and (filtro.DataFinal = 0) then
       qry.ParamByName('dataInicial').AsDateTime := filtro.DataInicial
