@@ -193,7 +193,7 @@ end;
 procedure TfrmMain.PreencherCabecalhoGridTransacoes;
 begin
   grdTransacoes.ColCount := 5;
-  grdTransacoes.RowCount := 2;
+  grdTransacoes.RowCount := 1;
 
   grdTransacoes.ColWidths[0] := -1;
   grdTransacoes.Cells[0,0] := 'Id';

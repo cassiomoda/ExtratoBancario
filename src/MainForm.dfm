@@ -103,7 +103,7 @@ object frmMain: TfrmMain
     TabOrder = 1
     OnDrawCell = grdTransacoesDrawCell
     ExplicitWidth = 622
-    ExplicitHeight = 263
+    ExplicitHeight = 222
   end
   object pnlBotoes: TPanel
     Left = 0
@@ -169,9 +169,8 @@ object frmMain: TfrmMain
     Font.Style = []
     ParentFont = False
     TabOrder = 3
-    ExplicitLeft = 544
-    ExplicitTop = 336
-    ExplicitWidth = 185
+    ExplicitTop = 335
+    ExplicitWidth = 622
     object lblSaldo: TLabel
       Left = 1
       Top = 1
